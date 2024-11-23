@@ -6,13 +6,15 @@ import { Router } from '@angular/router';
 import { LoginService } from '../../services/login.service';
 import { ToastrService } from 'ngx-toastr';
 
-interface loginForm {
+interface signupForm {
+  name: FormControl,
   email: FormControl,
-  password: FormControl
+  password: FormControl,
+  passwordConfirm: FormControl,
 }
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-signup',
   standalone: true,
   imports: [
     DefaultLoginLayoutComponent,
@@ -22,31 +24,33 @@ interface loginForm {
   providers: [
     LoginService
   ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  templateUrl: './signup.component.html',
+  styleUrl: './signup.component.scss'
 })
-export class LoginComponent {
-  loginForm!: FormGroup<loginForm>;
+export class signUpComponent {
+  signupForm!: FormGroup<signupForm>;
   constructor(
     private router: Router,
     private LoginService: LoginService,
     private toastService: ToastrService
   ){
-    this.loginForm = new FormGroup({
+    this.signupForm = new FormGroup({
+      name: new FormControl('', [Validators.required, Validators.minLength(3)]),
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)])
+      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
+      passwordConfirm: new FormControl('', [Validators.required, Validators.minLength(6)])
     })
   }
 
   submit(){
-    this.LoginService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe({
+    this.LoginService.login(this.signupForm.value.email, this.signupForm.value.password).subscribe({
       next: () => this.toastService.success("login feito com sucesso!"),
       error: () => this.toastService.error("erro inesperado! tente novamente mais tarde")
     })
   }
 
   navigate(){
-    this.router.navigate(["signup"])
+    this.router.navigate(["login"])
   }
 
 }
